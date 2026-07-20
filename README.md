@@ -1,45 +1,61 @@
-# Gerador de Holerite
-O código recebe do usuário uma tabela de funcionários pré-formatada e uma folha vazia de holerite para ser preenchida.
-Após isso, o sistema calcula todos os proventos e descontos de cada funcionário e gera seu holerite.
-Tempo médio: 10s/funcionário
+# Payslip Generator
 
-## Fluxo do programa
-- **Tabela de Horas**: O programa recebe uma tabela com as horas de entrada e saída.
-- **Cálculos**: O programa então executa todos os cálculos de proventos e descontos.
-- **Gerar Holerite**: Gera e salva o holerite na pasta.
+A desktop tool (PySimpleGUI) that reads a pre-formatted spreadsheet of employee clock-in/clock-out times, computes pay — including overtime, night-shift, hazard pay (periculosidade), and unhealthy-work premiums (insalubridade) under Brazilian labor rules — and fills in a payslip template for each employee.
 
-## Tecnologias Utilizadas
-- **Back-End**: Python
+This was an early project built to automate a manual payroll process; it's kept here as-is rather than rewritten, as a snapshot of that stage of my learning.
 
-## Como Rodar o Projeto
-1. Clone o repositório:
-```bash
-git clone https://github.com/JoseOtavioJunqueira/GeradorHolerite.git
-```
+## How It Works
 
-2. Navegue até o diretório do projeto:
-```bash
-cd GeradorHolerite
-```
+1. **Login**: simple username/password gate, with a basic "register new user" flow guarded by an admin password.
+2. **Hours table**: reads each employee's clock-in/clock-out hours from an Excel workbook (one sheet per day of the month).
+3. **Calculations**: computes worked hours, overtime, night-shift hours, and applicable hazard/unhealthy-work premiums.
+4. **Payslip generation**: fills in an Excel payslip template and saves one file per employee.
 
-3.Crie e ative um ambiente virtual (opcional, mas recomendado):
-```bash
-python -m venv venv source venv/bin/activate # No Windows, use venv\Scripts\activate
-```
+## Tech Stack
 
-5. Execute o programa:
-```bash
-python main.py
-```
+- Python
+- pandas, openpyxl (spreadsheet I/O)
+- PySimpleGUI (desktop UI)
 
-## Estrutura do Projeto
-- **main.py**: Código principal do projeto.
+## Getting Started
 
-## Licença
-Este projeto está licenciado sob a Licença MIT. Veja o arquivo LICENSE para mais detalhes.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/JoseOtavioJunqueira/GeradorHolerite.git
+   cd GeradorHolerite
+   ```
 
-## Contato
-José Otávio - joseotavio.jr1104@gmail.com
+2. Create and activate a virtual environment (recommended):
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+   > **Note:** PySimpleGUI moved to a paid license model after this project was built. If `pip install PySimpleGUI` fails for you, see their [current distribution instructions](https://www.pysimplegui.com/).
 
+4. Provide `funcionarios.xlsx` (the hours table) and `Holerite.xlsx` (the payslip template) in the project folder, or point to your own via the `FUNCIONARIOS_XLSX` / `HOLERITE_TEMPLATE_XLSX` environment variables. Set `ADMIN_PASSWORD` to override the default admin password used for registering new users.
 
+5. Run the app:
+   ```bash
+   python main.py
+   ```
+
+## Known Limitations
+
+This was built as a learning project, not production payroll software:
+
+- User credentials are stored in plain text (`usuarios.txt` / `senhas.txt`), not hashed.
+- It assumes a specific spreadsheet layout for both the hours table and the payslip template.
+- No automated tests.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+## Contact
+
+José Otávio — joseotavio.jr1104@gmail.com
