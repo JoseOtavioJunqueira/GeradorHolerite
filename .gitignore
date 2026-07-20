@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Runtime data — never commit real employee/payroll data or credentials
+usuarios.txt
+senhas.txt
+funcionarios.xlsx
+Holerite.xlsx
+HOLERITES/

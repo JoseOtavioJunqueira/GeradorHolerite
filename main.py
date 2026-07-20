@@ -1,9 +1,21 @@
+import os
 import pandas as pd
 import openpyxl as op
 from PySimpleGUI import PySimpleGUI as sg
 import datetime
 
 #######################################################
+# Configuration: adjust these paths for your machine, or set them as
+# environment variables (FUNCIONARIOS_XLSX, HOLERITE_TEMPLATE_XLSX, HOLERITES_DIR).
+PASTA_PROJETO = os.path.dirname(os.path.abspath(__file__))
+FUNCIONARIOS_XLSX = os.environ.get('FUNCIONARIOS_XLSX', os.path.join(PASTA_PROJETO, 'funcionarios.xlsx'))
+HOLERITE_TEMPLATE_XLSX = os.environ.get('HOLERITE_TEMPLATE_XLSX', os.path.join(PASTA_PROJETO, 'Holerite.xlsx'))
+HOLERITES_DIR = os.environ.get('HOLERITES_DIR', os.path.join(PASTA_PROJETO, 'HOLERITES'))
+
+# Admin password for registering new users; override with the ADMIN_PASSWORD env var.
+SENHA_ADMIN = os.environ.get('ADMIN_PASSWORD', 'change-me')
+
+
 def verificar_credenciais(usuario, senha):
     if usuario.strip() != '' and senha.strip() != '':
         with open('usuarios.txt', 'r') as usuarios_file, open('senhas.txt', 'r') as senhas_file:
@@ -13,7 +25,7 @@ def verificar_credenciais(usuario, senha):
             return usuario in usuarios and senha in senhas
 
 def cadastrar_usuario(novo_usuario, nova_senha, senha_adm):
-    if senha_adm == '123456' and novo_usuario.strip() != '' and nova_senha.strip() != '':
+    if senha_adm == SENHA_ADMIN and novo_usuario.strip() != '' and nova_senha.strip() != '':
         try:
             with open('usuarios.txt', 'a') as usuarios_file, open('senhas.txt', 'a') as senhas_file:
                 usuarios_file.write(f'\n{novo_usuario:<30}')
@@ -107,8 +119,7 @@ while True:
                     try:
 
                         while True:
-                            tabela = pd.read_excel(r'C:\Users\joseo\Desktop\Pycharm\Projeto\funcionarios.xlsx',
-                                                   sheet_name=a)
+                            tabela = pd.read_excel(FUNCIONARIOS_XLSX, sheet_name=a)
                             tabela['HE'] = pd.to_numeric(tabela['HE'], errors='coerce')
                             tabela['HS'] = pd.to_numeric(tabela['HS'], errors='coerce')
 
@@ -190,7 +201,7 @@ while True:
                             pagamento += (salario_hora * 0.2) * horas_not_mes
 
                         # passar para o excel (holerite)
-                        holerite = op.load_workbook(r'C:\Users\joseo\Desktop\Pycharm\Projeto\Holerite.xlsx')
+                        holerite = op.load_workbook(HOLERITE_TEMPLATE_XLSX)
                         aba = holerite.active
                         aba['C8'] = codigo
                         aba['G5'] = datetime.datetime.now().strftime("%B / %Y")
@@ -220,7 +231,8 @@ while True:
                                 aba[f'G{linha}'] = peri
                                 if peri == 'Sim':
                                     aba[f'H{linha}'] = f'{salario_base * 0.3:.2f}'
-                        holerite.save(rf'C:\Users\joseo\Desktop\Pycharm\Projeto\HOLERITES\Funcionario_nº{codigo}.xlsx')
+                        os.makedirs(HOLERITES_DIR, exist_ok=True)
+                        holerite.save(os.path.join(HOLERITES_DIR, f'Funcionario_n{codigo}.xlsx'))
                         # proximo funcionario
                         pagamento = 0
                         total = 0
